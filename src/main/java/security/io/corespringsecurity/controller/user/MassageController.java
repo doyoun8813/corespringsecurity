@@ -8,6 +8,6 @@ public class MassageController {
 
     @GetMapping("/messages")
     public String message() throws Exception {
-        return "user/messges";
+        return "user/messages";
     }
 }
