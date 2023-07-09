@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
-<head th:replace="layout/header::userHead"></head>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="~{layout/header::userHead}"></head>
 <body>
-<div th:replace="layout/top::header"></div>
+<div th:replace="~{layout/top::header}"></div>
 <div class="container">
     <div class="row">
         <nav class="col-md-2 d-none d-md-block bg-light sidebar">
@@ -35,7 +37,7 @@
         <div class="col-md-10">메시지</div>
     </div>
 </div>
-<div th:replace="layout/footer::footer"></div>
+<div th:replace="~{layout/footer::footer}"></div>
 <script th:src="@{/js/jquery.min.js}"></script>
 <script>
     $('#list').click(function () {

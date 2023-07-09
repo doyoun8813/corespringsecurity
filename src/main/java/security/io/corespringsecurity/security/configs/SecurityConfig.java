@@ -5,26 +5,32 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+
+import security.io.corespringsecurity.repository.UserRepository;
+import security.io.corespringsecurity.security.service.CustomUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        // return new BCryptPasswordEncoder();
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    private final UserRepository userRepository;
+
+    public SecurityConfig(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Bean
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+        // return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
+    // DB 로직 추가로 인한 인메모리 유저 주석
+    /*@Bean
     public UserDetailsService userDetailsService() {
 
         String password = passwordEncoder().encode("1111");
@@ -48,6 +54,11 @@ public class SecurityConfig {
             .build();
 
         return new InMemoryUserDetailsManager(user, manager, admin);
+    }*/
+
+    @Bean
+    public UserDetailsService customUserDetailsService(){
+        return new CustomUserDetailsService(userRepository);
     }
 
     @Bean
