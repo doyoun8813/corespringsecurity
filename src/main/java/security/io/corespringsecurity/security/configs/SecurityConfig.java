@@ -87,7 +87,12 @@ public class SecurityConfig {
                     .anyRequest().authenticated();
             })
             .formLogin(form -> {
-
+                form
+                    .loginPage("/login")
+                    .loginProcessingUrl("/login_proc")
+                    // .defaultSuccessUrl("/", true)
+                    .defaultSuccessUrl("/")
+                    .permitAll();
             })
             .build();
     }
