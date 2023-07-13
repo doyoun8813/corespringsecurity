@@ -90,8 +90,8 @@ public class SecurityConfig {
                 form
                     .loginPage("/login")
                     .loginProcessingUrl("/login_proc")
-                    // .defaultSuccessUrl("/", true)
-                    .defaultSuccessUrl("/")
+                    .defaultSuccessUrl("/", true)
+                    // .defaultSuccessUrl("/")
                     .permitAll();
             })
             .build();
