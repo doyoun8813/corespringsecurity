@@ -2,6 +2,7 @@ package security.io.corespringsecurity.security.configs;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -11,8 +12,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
+import jakarta.servlet.http.HttpServletRequest;
 import security.io.corespringsecurity.repository.UserRepository;
+import security.io.corespringsecurity.security.common.FormAuthenticationDetailsSource;
 import security.io.corespringsecurity.security.provider.CustomAuthenticationProvider;
 import security.io.corespringsecurity.security.service.CustomUserDetailsService;
 
@@ -76,6 +80,11 @@ public class SecurityConfig {
     }
 
     @Bean
+    public AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails>  formAuthenticationDetailsSource() {
+        return new FormAuthenticationDetailsSource();
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
             .authorizeHttpRequests(requests -> {
@@ -92,6 +101,7 @@ public class SecurityConfig {
                     .loginProcessingUrl("/login_proc")
                     .defaultSuccessUrl("/", true)
                     // .defaultSuccessUrl("/")
+                    .authenticationDetailsSource(formAuthenticationDetailsSource())
                     .permitAll();
             })
             .build();
