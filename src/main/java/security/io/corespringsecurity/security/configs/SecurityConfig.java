@@ -11,13 +11,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
-import jakarta.servlet.DispatcherType;
 import jakarta.servlet.http.HttpServletRequest;
 import security.io.corespringsecurity.repository.UserRepository;
 import security.io.corespringsecurity.security.common.FormAuthenticationDetailsSource;
+import security.io.corespringsecurity.security.handler.CustomAuthenticationFailureHandler;
 import security.io.corespringsecurity.security.handler.CustomAuthenticationSuccessHandler;
 import security.io.corespringsecurity.security.provider.CustomAuthenticationProvider;
 import security.io.corespringsecurity.security.service.CustomUserDetailsService;
@@ -92,11 +93,16 @@ public class SecurityConfig {
     }
 
     @Bean
+    public AuthenticationFailureHandler failureHandler() {
+        return new CustomAuthenticationFailureHandler();
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
             .authorizeHttpRequests(requests -> {
                 requests
-                    .requestMatchers("/", "/users").permitAll()
+                    .requestMatchers("/", "/users", "/login*").permitAll()
                     .requestMatchers("/mypage").hasRole("USER")
                     .requestMatchers("/messages").hasRole("MANAGER")
                     .requestMatchers("/config").hasRole("ADMIN")
@@ -110,6 +116,7 @@ public class SecurityConfig {
                     // .defaultSuccessUrl("/")
                     .authenticationDetailsSource(formAuthenticationDetailsSource())
                     .successHandler(successHandler())
+                    .failureHandler(failureHandler())
                     .permitAll();
             })
             .build();
