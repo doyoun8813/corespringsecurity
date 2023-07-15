@@ -4,7 +4,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -12,11 +11,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
+import jakarta.servlet.DispatcherType;
 import jakarta.servlet.http.HttpServletRequest;
 import security.io.corespringsecurity.repository.UserRepository;
 import security.io.corespringsecurity.security.common.FormAuthenticationDetailsSource;
+import security.io.corespringsecurity.security.handler.CustomAuthenticationSuccessHandler;
 import security.io.corespringsecurity.security.provider.CustomAuthenticationProvider;
 import security.io.corespringsecurity.security.service.CustomUserDetailsService;
 
@@ -85,6 +87,11 @@ public class SecurityConfig {
     }
 
     @Bean
+    public AuthenticationSuccessHandler successHandler() {
+        return new CustomAuthenticationSuccessHandler();
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
             .authorizeHttpRequests(requests -> {
@@ -99,9 +106,10 @@ public class SecurityConfig {
                 form
                     .loginPage("/login")
                     .loginProcessingUrl("/login_proc")
-                    .defaultSuccessUrl("/", true)
+                    // .defaultSuccessUrl("/", true)
                     // .defaultSuccessUrl("/")
                     .authenticationDetailsSource(formAuthenticationDetailsSource())
+                    .successHandler(successHandler())
                     .permitAll();
             })
             .build();
