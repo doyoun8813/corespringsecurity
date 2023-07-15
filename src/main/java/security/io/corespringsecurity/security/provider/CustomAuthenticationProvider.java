@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 import security.io.corespringsecurity.security.common.FormWebAuthenticationDetails;
 import security.io.corespringsecurity.security.service.AccountContext;
@@ -34,9 +35,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             throw new BadCredentialsException("BadCredentialsException");
         }
 
-        FormWebAuthenticationDetails details = (FormWebAuthenticationDetails)authentication.getDetails();
-        String secretKey = details.getSecretKey();
-        if(secretKey == null || !"secret".equals(secretKey)){
+        String secretKey = ((FormWebAuthenticationDetails)authentication.getDetails()).getSecretKey();
+        if(!"secret".equals(secretKey)){
             throw new InsufficientAuthenticationException("InsufficientAuthenticationException");
         }
 

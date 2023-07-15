@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 public class FormWebAuthenticationDetails extends WebAuthenticationDetails {
 
-    private String secretKey;
+    private final String secretKey;
     public FormWebAuthenticationDetails(HttpServletRequest request) {
         super(request);
 
