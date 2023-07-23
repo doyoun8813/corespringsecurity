@@ -117,7 +117,7 @@ public class SecurityConfig {
         return http
             .authorizeHttpRequests(requests -> {
                 requests
-                    .requestMatchers("/", "/users", "/login*", "/css/**", "/js/**", "/images/**").permitAll()
+                    .requestMatchers("/", "/users", "/login*", "/css/**", "/js/**", "/images/**", "/error/**").permitAll()
                     .requestMatchers("/mypage").hasRole("USER")
                     .requestMatchers("/messages").hasRole("MANAGER")
                     .requestMatchers("/config").hasRole("ADMIN")

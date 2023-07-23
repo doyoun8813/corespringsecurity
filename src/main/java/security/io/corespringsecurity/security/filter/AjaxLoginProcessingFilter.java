@@ -2,9 +2,15 @@ package security.io.corespringsecurity.security.filter;
 
 import java.io.IOException;
 
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+import org.springframework.security.web.context.DelegatingSecurityContextRepository;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.thymeleaf.util.StringUtils;
 
@@ -20,8 +26,22 @@ public class AjaxLoginProcessingFilter extends AbstractAuthenticationProcessingF
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public AjaxLoginProcessingFilter() {
+    public AjaxLoginProcessingFilter(HttpSecurity http, AuthenticationManager authenticationManager) {
         super(new AntPathRequestMatcher("/api/login"));
+        setSecurityContextRepository(getSecurityContextRepository(http));
+    }
+
+    public AjaxLoginProcessingFilter(AuthenticationManager authenticationManager){
+        super(new AntPathRequestMatcher("/api/login"), authenticationManager);
+    }
+
+    SecurityContextRepository getSecurityContextRepository(HttpSecurity http) {
+        SecurityContextRepository securityContextRepository = http.getSharedObject(SecurityContextRepository.class);
+        if(securityContextRepository == null){
+            securityContextRepository = new DelegatingSecurityContextRepository(
+                new RequestAttributeSecurityContextRepository(), new HttpSessionSecurityContextRepository());
+        }
+        return securityContextRepository;
     }
 
     @Override
@@ -45,9 +65,6 @@ public class AjaxLoginProcessingFilter extends AbstractAuthenticationProcessingF
     }
 
     private boolean isAjax(HttpServletRequest request) {
-        if("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))){
-            return true;
-        }
-        return false;
+        return "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
     }
 }

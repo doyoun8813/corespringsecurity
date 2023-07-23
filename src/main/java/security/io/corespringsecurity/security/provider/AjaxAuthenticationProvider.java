@@ -38,6 +38,6 @@ public class AjaxAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public boolean supports(Class<?> authentication) {
-        return authentication.equals(AjaxAuthenticationToken.class);
+        return AjaxAuthenticationToken.class.isAssignableFrom(authentication);
     }
 }
