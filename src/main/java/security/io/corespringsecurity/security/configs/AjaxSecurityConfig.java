@@ -15,12 +15,10 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import security.io.corespringsecurity.repository.UserRepository;
 import security.io.corespringsecurity.security.common.AjaxLoginAuthenticationEntryPoint;
-import security.io.corespringsecurity.security.filter.AjaxLoginProcessingFilter;
 import security.io.corespringsecurity.security.handler.AjaxAccessDeniedHandler;
 import security.io.corespringsecurity.security.handler.AjaxAuthenticationFailureHandler;
 import security.io.corespringsecurity.security.handler.AjaxAuthenticationSuccessHandler;
@@ -64,7 +62,7 @@ public class AjaxSecurityConfig {
         return authenticationManager;
     }
 
-    @Bean
+    /*@Bean
     public AjaxLoginProcessingFilter ajaxLoginProcessingFilter(HttpSecurity http) throws Exception {
         AjaxLoginProcessingFilter ajaxLoginProcessingFilter = new AjaxLoginProcessingFilter(http,
             authenticationConfiguration.getAuthenticationManager());
@@ -72,7 +70,7 @@ public class AjaxSecurityConfig {
         ajaxLoginProcessingFilter.setAuthenticationSuccessHandler(ajaxSuccessHandler());
         ajaxLoginProcessingFilter.setAuthenticationFailureHandler(ajaxFailureHandler());
         return ajaxLoginProcessingFilter;
-    }
+    }*/
 
     @Bean
     public AuthenticationSuccessHandler ajaxSuccessHandler() {
@@ -97,6 +95,9 @@ public class AjaxSecurityConfig {
     @Bean
     @Order(0)
     public SecurityFilterChain ajaxSecurityFilterChain(HttpSecurity http) throws Exception {
+
+        customConfigurerAjax(http);
+
         return http
             .securityMatcher(AntPathRequestMatcher.antMatcher("/api/**"))
             .authorizeHttpRequests(requests -> {
@@ -104,7 +105,7 @@ public class AjaxSecurityConfig {
                     .requestMatchers("/api/messages").hasRole("MANAGER")
                     .anyRequest().authenticated();
             })
-            .addFilterBefore(ajaxLoginProcessingFilter(http), UsernamePasswordAuthenticationFilter.class)
+            // .addFilterBefore(ajaxLoginProcessingFilter(http), UsernamePasswordAuthenticationFilter.class)
             .exceptionHandling(exception -> {
                 exception
                     .authenticationEntryPoint(authenticationEntryPoint())
@@ -116,4 +117,14 @@ public class AjaxSecurityConfig {
             })
             .build();
     }
+
+    private void customConfigurerAjax(HttpSecurity http) throws Exception {
+        http
+            .apply(new AjaxLoginConfigurer<>(http, authenticationConfiguration.getAuthenticationManager()))
+            .successHandlerAjax(ajaxSuccessHandler())
+            .failureHandlerAjax(ajaxFailureHandler())
+            .setAuthenticationManager(authenticationManager(authenticationConfiguration))
+            .loginProcessingUrl("/api/login");
+    }
+
 }
