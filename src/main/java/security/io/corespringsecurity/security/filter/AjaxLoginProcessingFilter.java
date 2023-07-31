@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import security.io.corespringsecurity.domain.AccountDto;
+import security.io.corespringsecurity.domain.dto.AccountDto;
 import security.io.corespringsecurity.security.token.AjaxAuthenticationToken;
 
 public class AjaxLoginProcessingFilter extends AbstractAuthenticationProcessingFilter {

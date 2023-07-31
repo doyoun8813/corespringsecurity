@@ -6,8 +6,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import security.io.corespringsecurity.domain.Account;
-import security.io.corespringsecurity.domain.AccountDto;
+import security.io.corespringsecurity.domain.entity.Account;
+import security.io.corespringsecurity.domain.dto.AccountDto;
 import security.io.corespringsecurity.service.UserService;
 
 @Controller

@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import security.io.corespringsecurity.domain.Account;
+import security.io.corespringsecurity.domain.entity.Account;
 import security.io.corespringsecurity.repository.UserRepository;
 
 public class CustomUserDetailsService implements UserDetailsService {

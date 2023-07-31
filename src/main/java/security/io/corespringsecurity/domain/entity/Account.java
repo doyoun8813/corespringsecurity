@@ -1,4 +1,4 @@
-package security.io.corespringsecurity.domain;
+package security.io.corespringsecurity.domain.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

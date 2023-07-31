@@ -3,7 +3,7 @@ package security.io.corespringsecurity.service.impl;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
-import security.io.corespringsecurity.domain.Account;
+import security.io.corespringsecurity.domain.entity.Account;
 import security.io.corespringsecurity.repository.UserRepository;
 import security.io.corespringsecurity.service.UserService;
 

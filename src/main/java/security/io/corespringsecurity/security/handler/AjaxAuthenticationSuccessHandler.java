@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import security.io.corespringsecurity.domain.Account;
+import security.io.corespringsecurity.domain.entity.Account;
 
 public class AjaxAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
