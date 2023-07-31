@@ -102,6 +102,7 @@ public class AjaxSecurityConfig {
             .securityMatcher(AntPathRequestMatcher.antMatcher("/api/**"))
             .authorizeHttpRequests(requests -> {
                 requests
+                    .requestMatchers("/error*", "/api/login").permitAll()
                     .requestMatchers("/api/messages").hasRole("MANAGER")
                     .anyRequest().authenticated();
             })
@@ -111,10 +112,10 @@ public class AjaxSecurityConfig {
                     .authenticationEntryPoint(authenticationEntryPoint())
                     .accessDeniedHandler(ajaxAccessDeniedHandler());
             })
-            .csrf(csrf -> {
+            /*.csrf(csrf -> {
                 csrf
                     .ignoringRequestMatchers("/api/**");
-            })
+            })*/
             .build();
     }
 

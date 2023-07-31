@@ -3,6 +3,10 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:fragment="userHead">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+    <meta id="_csrf-header" name="_csrf_header" th:content="${_csrf.headerName}"/>
+
     <title>Home</title>
     <link rel="stylesheet" th:href="@{/css/base.css}" />
     <link rel="stylesheet" th:href="@{https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css}" />
