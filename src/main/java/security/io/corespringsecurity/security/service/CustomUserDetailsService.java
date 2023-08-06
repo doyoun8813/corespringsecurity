@@ -24,7 +24,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        Optional<Account> account = userRepository.findByUsername(username);
+        /*Optional<Account> account = userRepository.findByUsername(username);
 
         Account findAccount = account.orElseThrow(() ->
             new UsernameNotFoundException("UsernameNotFoundException")
@@ -33,7 +33,18 @@ public class CustomUserDetailsService implements UserDetailsService {
         List<GrantedAuthority> roles = new ArrayList<>();
         roles.add(new SimpleGrantedAuthority(findAccount.getRole()));
 
-        return new AccountContext(findAccount, roles);
+        return new AccountContext(findAccount, roles);*/
+
+        Account account = userRepository.findByUsername(username);
+
+        if(account == null){
+            throw new UsernameNotFoundException("UsernameNotFoundException");
+        }
+
+        List<GrantedAuthority> roles = new ArrayList<>();
+        roles.add(new SimpleGrantedAuthority(account.getRole()));
+
+        return new AccountContext(account, roles);
     }
 
 }
