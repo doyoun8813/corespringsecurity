@@ -1,18 +1,20 @@
 package security.io.corespringsecurity.security.configs;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
@@ -20,16 +22,21 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import jakarta.servlet.http.HttpServletRequest;
 import security.io.corespringsecurity.repository.UserRepository;
 import security.io.corespringsecurity.security.common.FormAuthenticationDetailsSource;
+import security.io.corespringsecurity.security.factory.UrlResourcesMapFactoryBean;
 import security.io.corespringsecurity.security.handler.CustomAccessDeniedHandler;
 import security.io.corespringsecurity.security.handler.CustomAuthenticationFailureHandler;
 import security.io.corespringsecurity.security.handler.CustomAuthenticationSuccessHandler;
+import security.io.corespringsecurity.security.manager.CustomRequestMatcherDelegatingAuthorizationManager;
 import security.io.corespringsecurity.security.provider.CustomAuthenticationProvider;
 import security.io.corespringsecurity.security.service.CustomUserDetailsService;
+import security.io.corespringsecurity.security.service.SecurityResourceService;
 
 @Configuration
 @EnableWebSecurity
-@Order(1)
 public class SecurityConfig {
+
+    @Autowired
+    private SecurityResourceService securityResourceService;
 
     private final UserRepository userRepository;
 
@@ -111,16 +118,33 @@ public class SecurityConfig {
 
     }
 
+   @Bean
+    public AuthorizationManager<HttpServletRequest> customAuthorizationManager() throws Exception {
+        return new CustomRequestMatcherDelegatingAuthorizationManager(urlResourcesMapFactoryBean().getObject());
+    }
+
+    private UrlResourcesMapFactoryBean urlResourcesMapFactoryBean() {
+
+        UrlResourcesMapFactoryBean urlResourcesMapFactoryBean = new UrlResourcesMapFactoryBean();
+        urlResourcesMapFactoryBean.setSecurityResourceService(securityResourceService);
+        return urlResourcesMapFactoryBean;
+    }
+
     @Bean
-    @Order(1)
+    public AuthorizationFilter customAuthorizationFilter() throws Exception {
+        return new AuthorizationFilter(customAuthorizationManager());
+    }
+
+    @Bean
+    @Order(0)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
             .authorizeHttpRequests(requests -> {
                 requests
-                    .requestMatchers("/", "/users", "/login*", "/css/**", "/js/**", "/images/**", "/error/**").permitAll()
-                    .requestMatchers("/mypage").hasRole("USER")
-                    .requestMatchers("/messages").hasRole("MANAGER")
-                    .requestMatchers("/config").hasRole("ADMIN")
+                    // .requestMatchers("/", "/users", "/login*", "/css/**", "/js/**", "/images/**", "/error/**").permitAll()
+                    // .requestMatchers("/mypage").hasAnyRole("USER", "ADMIN")
+                    // .requestMatchers("/messages").hasRole("MANAGER")
+                    // .requestMatchers("/config").hasRole("ADMIN")
                     .anyRequest().authenticated();
             })
             .formLogin(form -> {
@@ -139,6 +163,7 @@ public class SecurityConfig {
                     .accessDeniedHandler(accessDeniedHandler());
             })
             .authenticationProvider(customAuthenticationProvider())
+            .addFilterBefore(customAuthorizationFilter(), AuthorizationFilter.class)
             .build();
     }
 }

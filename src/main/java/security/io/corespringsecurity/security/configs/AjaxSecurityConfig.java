@@ -26,7 +26,6 @@ import security.io.corespringsecurity.security.provider.AjaxAuthenticationProvid
 import security.io.corespringsecurity.security.service.CustomUserDetailsService;
 
 @Configuration
-@Order(0)
 public class AjaxSecurityConfig {
 
     private final UserRepository userRepository;
@@ -93,7 +92,7 @@ public class AjaxSecurityConfig {
     }
 
     @Bean
-    @Order(0)
+    @Order(1)
     public SecurityFilterChain ajaxSecurityFilterChain(HttpSecurity http) throws Exception {
 
         customConfigurerAjax(http);
