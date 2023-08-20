@@ -16,6 +16,7 @@ import security.io.corespringsecurity.domain.dto.ResourcesDto;
 import security.io.corespringsecurity.domain.entity.Resources;
 import security.io.corespringsecurity.domain.entity.Role;
 import security.io.corespringsecurity.repository.RoleRepository;
+import security.io.corespringsecurity.security.manager.CustomRequestMatcherDelegatingAuthorizationManager;
 import security.io.corespringsecurity.service.ResourcesService;
 import security.io.corespringsecurity.service.RoleService;
 
@@ -30,6 +31,9 @@ public class ResourcesController {
 
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private CustomRequestMatcherDelegatingAuthorizationManager customAuthorizationManager;
 
     @GetMapping(value="/admin/resources")
     public String getResources(Model model) throws Exception {
@@ -51,6 +55,7 @@ public class ResourcesController {
         resources.setRoleSet(roles);
 
         resourcesService.createResources(resources);
+        customAuthorizationManager.reload();
 
         return "redirect:/admin/resources";
     }
@@ -89,6 +94,7 @@ public class ResourcesController {
 
         Resources resources = resourcesService.getResources(Long.valueOf(id));
         resourcesService.deleteResources(Long.valueOf(id));
+        customAuthorizationManager.reload();
 
         return "redirect:/admin/resources";
     }

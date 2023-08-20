@@ -2,6 +2,7 @@ package security.io.corespringsecurity.security.manager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.function.Supplier;
 
 import org.apache.commons.logging.Log;
@@ -15,16 +16,20 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcherEntry;
 
 import jakarta.servlet.http.HttpServletRequest;
+import security.io.corespringsecurity.security.service.SecurityResourceService;
 
 public class CustomRequestMatcherDelegatingAuthorizationManager implements AuthorizationManager<HttpServletRequest> {
 
     private final Log logger = LogFactory.getLog(getClass());
+    
+    private final SecurityResourceService securityResourceService;
 
-    private List<RequestMatcherEntry<AuthorizationManager<RequestAuthorizationContext>>> mappings = new ArrayList<>();
+    private List<RequestMatcherEntry<AuthorizationManager<RequestAuthorizationContext>>> mappings;
 
     public CustomRequestMatcherDelegatingAuthorizationManager(
-        List<RequestMatcherEntry<AuthorizationManager<RequestAuthorizationContext>>> mappings) {
+        List<RequestMatcherEntry<AuthorizationManager<RequestAuthorizationContext>>> mappings, SecurityResourceService securityResourceService) {
         this.mappings = mappings;
+        this.securityResourceService = securityResourceService;
     }
 
     @Override
@@ -54,4 +59,12 @@ public class CustomRequestMatcherDelegatingAuthorizationManager implements Autho
         }
         return null;
     }
+
+    public void reload() {
+
+        mappings.clear();
+        mappings = securityResourceService.getResourceList();
+
+    }
+    
 }

@@ -119,8 +119,8 @@ public class SecurityConfig {
     }
 
    @Bean
-    public AuthorizationManager<HttpServletRequest> customAuthorizationManager() throws Exception {
-        return new CustomRequestMatcherDelegatingAuthorizationManager(urlResourcesMapFactoryBean().getObject());
+    public CustomRequestMatcherDelegatingAuthorizationManager customAuthorizationManager() throws Exception {
+        return new CustomRequestMatcherDelegatingAuthorizationManager(urlResourcesMapFactoryBean().getObject(), securityResourceService);
     }
 
     private UrlResourcesMapFactoryBean urlResourcesMapFactoryBean() {
@@ -141,7 +141,7 @@ public class SecurityConfig {
         return http
             .authorizeHttpRequests(requests -> {
                 requests
-                    // .requestMatchers("/", "/users", "/login*", "/css/**", "/js/**", "/images/**", "/error/**").permitAll()
+                    .requestMatchers("/", "/users", "/login*", "/css/**", "/js/**", "/images/**", "/error/**").permitAll()
                     // .requestMatchers("/mypage").hasAnyRole("USER", "ADMIN")
                     // .requestMatchers("/messages").hasRole("MANAGER")
                     // .requestMatchers("/config").hasRole("ADMIN")
