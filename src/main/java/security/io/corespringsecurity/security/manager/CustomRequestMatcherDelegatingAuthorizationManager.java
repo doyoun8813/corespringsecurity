@@ -1,10 +1,9 @@
 package security.io.corespringsecurity.security.manager;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.function.Supplier;
 
+import org.aopalliance.intercept.MethodInvocation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.log.LogMessage;
@@ -21,13 +20,14 @@ import security.io.corespringsecurity.security.service.SecurityResourceService;
 public class CustomRequestMatcherDelegatingAuthorizationManager implements AuthorizationManager<HttpServletRequest> {
 
     private final Log logger = LogFactory.getLog(getClass());
-    
+
     private final SecurityResourceService securityResourceService;
 
     private List<RequestMatcherEntry<AuthorizationManager<RequestAuthorizationContext>>> mappings;
 
     public CustomRequestMatcherDelegatingAuthorizationManager(
-        List<RequestMatcherEntry<AuthorizationManager<RequestAuthorizationContext>>> mappings, SecurityResourceService securityResourceService) {
+        List<RequestMatcherEntry<AuthorizationManager<RequestAuthorizationContext>>> mappings,
+        SecurityResourceService securityResourceService) {
         this.mappings = mappings;
         this.securityResourceService = securityResourceService;
     }
@@ -66,5 +66,5 @@ public class CustomRequestMatcherDelegatingAuthorizationManager implements Autho
         mappings = securityResourceService.getResourceList();
 
     }
-    
+
 }

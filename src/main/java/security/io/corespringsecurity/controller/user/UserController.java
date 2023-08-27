@@ -23,6 +23,9 @@ public class UserController {
 
     @GetMapping("/mypage")
     public String myPage() throws Exception {
+
+        userService.order();
+
         return "user/mypage";
     }
 

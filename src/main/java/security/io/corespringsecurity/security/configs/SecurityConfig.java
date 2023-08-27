@@ -6,9 +6,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authorization.AuthorizationManager;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,7 +32,7 @@ import security.io.corespringsecurity.security.service.CustomUserDetailsService;
 import security.io.corespringsecurity.security.service.SecurityResourceService;
 
 @Configuration
-@EnableWebSecurity
+@EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
 
     @Autowired
@@ -87,11 +87,11 @@ public class SecurityConfig {
         return new CustomAuthenticationProvider(customUserDetailsService(), passwordEncoder());
     }
 
-    /*@Bean
+    @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         // return web -> web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
         return web -> web.ignoring().requestMatchers("/css/**", "/js/**", "/images/**");
-    }*/
+    }
 
     @Bean
     public AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails>  formAuthenticationDetailsSource() {
@@ -118,7 +118,7 @@ public class SecurityConfig {
 
     }
 
-   @Bean
+    @Bean
     public CustomRequestMatcherDelegatingAuthorizationManager customAuthorizationManager() throws Exception {
         return new CustomRequestMatcherDelegatingAuthorizationManager(urlResourcesMapFactoryBean().getObject(), securityResourceService);
     }
